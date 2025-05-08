@@ -19,7 +19,7 @@ public class ActivityBoxController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 dir = isVertical ? Vector3.up : Vector3.right;
-            transform.position += dir * moveSpeed;
+            //transform.position += dir * moveSpeed;
         }
     }
 }

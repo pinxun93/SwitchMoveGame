@@ -1,18 +1,21 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 
 public class UIActivityControl : MonoBehaviour
 {
-    public Transform activityBox;  // ��i�A�� ActivityBox
-    public Slider xSlider;
-    public Slider ySlider;
+    public Transform activityBox;
+    public Slider widthSlider;
+    public Slider heightSlider;
 
     void Update()
     {
-        if (activityBox != null && xSlider != null && ySlider != null)
+        if (Time.timeScale == 0 && activityBox != null)
         {
-            activityBox.position = new Vector3(xSlider.value, ySlider.value, 0f);
+            float width = widthSlider != null ? widthSlider.value : activityBox.localScale.x;
+            float height = heightSlider != null ? heightSlider.value : activityBox.localScale.y;
+
+            activityBox.localScale = new Vector3(width, height, 1f); // 只改大小，不改位置
         }
     }
 }
