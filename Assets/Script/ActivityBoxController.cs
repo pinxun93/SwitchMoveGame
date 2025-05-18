@@ -1,20 +1,20 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class ActivityBoxController : MonoBehaviour
 {
-    [Header("UI¤¸¯À")]
+    [Header("UIå…ƒç´ ")]
     public Slider xSizeSlider;
     public Slider ySizeSlider;
-    public RectTransform slidersPanel; // ¨Ï¥ÎRectTransform¨Ó©w¦ìUI­±ªO
-    public float sliderOffsetY = 100f; // ·Æ¶ô­±ªO»P¬¡°Ê®Øªº««ª½°¾²¾¶q
+    public RectTransform sliderPanel; // ä½¿ç”¨RectTransformä¾†å®šä½UIé¢æ¿
+    public float sliderOffsetY = 100f; // èˆ‡æ´»å‹•æ¡†çš„è·é›¢
 
-    [Header("½Õ¾ã³]¸m")]
+    [Header("èª¿æ•´è¨­ç½®")]
     public float minSize = 1f;
     public float maxSize = 10f;
 
-    [Header("Debug³]¸m")]
+    [Header("Debugè¨­ç½®")]
     public bool debugMode = false;
 
     private GameManager gameManager;
@@ -29,17 +29,16 @@ public class ActivityBoxController : MonoBehaviour
         mainCamera = Camera.main;
         boxCollider = GetComponent<BoxCollider2D>();
 
-        // ¦pªG¨S¦³¸I¼²¾¹¡A²K¥[¤@­Ó
         if (boxCollider == null)
         {
             boxCollider = gameObject.AddComponent<BoxCollider2D>();
-            boxCollider.isTrigger = true; // ³]¬°Ä²µo¾¹¥HÁ×§Kª«²z¼vÅT
+            boxCollider.isTrigger = true;
         }
     }
 
     private void Start()
     {
-        // ³]¸m·Æ¶ôªì©l­È©M½d³ò
+        // è¨­ç½®æ»‘å¡Šåˆå§‹å€¼å’Œç¯„åœ
         if (xSizeSlider != null)
         {
             xSizeSlider.minValue = minSize;
@@ -55,137 +54,140 @@ public class ActivityBoxController : MonoBehaviour
             ySizeSlider.value = transform.localScale.y;
             ySizeSlider.onValueChanged.AddListener(UpdateYSize);
         }
+
+        // âœ… åˆå§‹æ»‘å¡Šä½ç½®å›ºå®šåœ¨åº•éƒ¨åä¸‹
+        if (sliderPanel != null)
+        {
+            Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(mainCamera, transform.position);
+            Vector2 localPoint;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                sliderPanel.parent as RectTransform,
+                new Vector2(screenPosition.x, screenPosition.y - sliderOffsetY),
+                null,
+                out localPoint
+            );
+            sliderPanel.anchoredPosition = localPoint;
+            sliderPanel.gameObject.SetActive(false); // ä¸€é–‹å§‹ä¸é¡¯ç¤º
+        }
     }
+
+    private bool wasPaused = false; // è¨˜éŒ„ä¸Šä¸€æ¬¡æ˜¯å¦ç‚ºæš«åœç‹€æ…‹
 
     private void Update()
     {
-        // ½T«O¥u¦³¦b¼È°±¼Ò¦¡¤U¤~¯à¾Ş§@¬¡°Ê®Ø
-        if (!gameManager.IsPaused)
+        bool isPaused = gameManager.IsPaused;
+
+        // æ›´æ–°æ»‘å¡Šé¢æ¿å¯è¦‹æ€§
+        if (sliderPanel != null)
+        {
+            sliderPanel.gameObject.SetActive(isPaused);
+
+            // æ¯æ¬¡å‰›é€²å…¥æš«åœç‹€æ…‹æ™‚æ›´æ–°æ»‘å¡Šä½ç½®
+            if (isPaused && !wasPaused)
+            {
+                UpdateSliderPanelPosition();
+            }
+        }
+
+        wasPaused = isPaused;
+
+        if (!isPaused)
             return;
 
-        // §ó·s·Æ¶ô­±ªO¦ì¸m¡A¨Ï¨ä¸òÀH¬¡°Ê®Ø
-        UpdateSlidersPanelPosition();
-
-        // ³B²z©ì°ÊÅŞ¿è
         HandleDragging();
 
-        // ¦]¬°§Ú­Ì¨Ï¥Î¤FEventSystem¡A©Ò¥H»İ­n½T«OUI¤¬°ÊÀu¥ı©ó¹CÀ¸ª«¥ó¤¬°Ê
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-        {
-            // ¦pªG«ü°w¦bUI¤¸¯À¤W¡A¤£³B²z¹CÀ¸ª«¥óªº©ì°Ê
             return;
-        }
-    }
-
-    private void UpdateSlidersPanelPosition()
-    {
-        if (slidersPanel != null)
-        {
-            // ±N¬¡°Ê®Øªº¥@¬É§¤¼ĞÂà´«¬°«Ì¹õ§¤¼Ğ
-            Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(mainCamera, transform.position);
-
-            // ³]¸m·Æ¶ô­±ªOªº¦ì¸m¦b¬¡°Ê®Ø¤U¤è
-            Vector2 localPoint;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                slidersPanel.parent as RectTransform,
-                new Vector2(screenPosition.x, screenPosition.y - sliderOffsetY),
-                null,
-                out localPoint);
-
-            slidersPanel.anchoredPosition = localPoint;
-        }
     }
 
     private void HandleDragging()
     {
-        // ¶}©l©ì°Ê
         if (Input.GetMouseButtonDown(0))
         {
-            // ±N·Æ¹«ÂIÀ»¦ì¸m±q«Ì¹õ®y¼ĞÂà´«¬°¥@¬É®y¼Ğ
             Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = transform.position.z; // «O«ùz­È¤£ÅÜ
+            mousePos.z = transform.position.z;
 
-            // ÀË¬d·Æ¹«ÂIÀ»¬O§_¦b¬¡°Ê®Ø¤º
-            Collider2D hit = Physics2D.OverlapPoint(new Vector2(mousePos.x, mousePos.y));
+            Collider2D hit = Physics2D.OverlapPoint(mousePos);
 
             if (hit != null && hit.transform == transform)
             {
                 isDragging = true;
                 offset = transform.position - mousePos;
 
-                if (debugMode)
-                {
-                    Debug.Log("¶}©l©ì°Ê¬¡°Ê®Ø");
-                }
+                if (debugMode) Debug.Log("é–‹å§‹æ‹–å‹•æ´»å‹•æ¡†");
             }
         }
 
-        // µ²§ô©ì°Ê
         if (Input.GetMouseButtonUp(0))
         {
-            if (isDragging && debugMode)
-            {
-                Debug.Log("µ²§ô©ì°Ê¬¡°Ê®Ø");
-            }
+            if (isDragging && debugMode) Debug.Log("çµæŸæ‹–å‹•æ´»å‹•æ¡†");
             isDragging = false;
         }
 
-        // ¦pªG¥¿¦b©ì°Ê¡A§ó·s¬¡°Ê®Ø¦ì¸m
         if (isDragging)
         {
             Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = transform.position.z; // «O«ùz­È¤£ÅÜ
+            mousePos.z = transform.position.z;
             transform.position = mousePos + offset;
         }
     }
 
-    // ³q¹LX¶b·Æ¶ô½Õ¾ã¬¡°Ê®Ø¼e«×
     private void UpdateXSize(float value)
     {
         Vector3 newScale = transform.localScale;
         newScale.x = value;
         transform.localScale = newScale;
 
-        // §ó·s¸I¼²¾¹¤j¤p
         if (boxCollider != null)
-        {
-            boxCollider.size = new Vector2(1f, 1f); // ­«¸m¤j¤p
-            boxCollider.size = new Vector2(value, boxCollider.size.y); // ³]¸m·s¤j¤p
-        }
+            boxCollider.size = new Vector2(value, boxCollider.size.y);
 
-        if (debugMode)
-        {
-            Debug.Log("§ó·s¬¡°Ê®Ø¼e«×: " + value);
-        }
+        if (debugMode) Debug.Log("æ›´æ–°å¯¬åº¦: " + value);
     }
 
-    // ³q¹LY¶b·Æ¶ô½Õ¾ã¬¡°Ê®Ø°ª«×
     private void UpdateYSize(float value)
     {
         Vector3 newScale = transform.localScale;
         newScale.y = value;
         transform.localScale = newScale;
 
-        // §ó·s¸I¼²¾¹¤j¤p
         if (boxCollider != null)
-        {
-            boxCollider.size = new Vector2(1f, 1f); // ­«¸m¤j¤p
-            boxCollider.size = new Vector2(boxCollider.size.x, value); // ³]¸m·s¤j¤p
-        }
+            boxCollider.size = new Vector2(boxCollider.size.x, value);
 
-        if (debugMode)
-        {
-            Debug.Log("§ó·s¬¡°Ê®Ø°ª«×: " + value);
-        }
+        if (debugMode) Debug.Log("æ›´æ–°é«˜åº¦: " + value);
     }
 
     private void OnDrawGizmos()
     {
         if (debugMode)
         {
-            // Ã¸»s¬¡°Ê®Ø½d³ò¡AÀ°§U½Õ¸Õ
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(transform.position, transform.localScale);
+        }
+    }
+
+
+
+    private void UpdateSliderPanelPosition()
+    {
+        if (sliderPanel != null && mainCamera != null)
+        {
+            // å–å¾—å·¦ä¸‹è§’åœ¨ä¸–ç•Œåº§æ¨™çš„é»
+            Vector3 bottomLeftWorld = transform.position
+                - new Vector3(transform.localScale.x / 2f, transform.localScale.y / 2f, 0f);
+
+            // è½‰æ›æˆè¢å¹•åº§æ¨™
+            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(mainCamera, bottomLeftWorld);
+
+            // å°‡è¢å¹•åº§æ¨™è½‰æ›ç‚ºæœ¬åœ° UI åº§æ¨™
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                sliderPanel.parent as RectTransform,
+                screenPos,
+                null, // å› ç‚ºæ˜¯ Overlay ä¸éœ€è¦ Camera
+                out Vector2 localPos
+            );
+
+            // è¨­å®šé¢æ¿ä½ç½®
+            sliderPanel.anchoredPosition = localPos;
         }
     }
 }

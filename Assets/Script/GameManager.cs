@@ -24,8 +24,9 @@ public class GameManager : MonoBehaviour
         {
             boxInitialSize = activityBox.transform.localScale;
             boxInitialPosition = activityBox.transform.position;
-            activityBox.SetActive(false);
+            activityBox.SetActive(true);
         }
+
 
         // 隱藏UI容器
         if (activityBoxUIContainer != null)
@@ -70,7 +71,7 @@ public class GameManager : MonoBehaviour
             // 隱藏活動框和UI容器
             if (activityBox != null)
             {
-                activityBox.SetActive(false);
+                activityBox.SetActive(true);
             }
 
             if (activityBoxUIContainer != null)

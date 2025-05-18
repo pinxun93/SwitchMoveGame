@@ -24,6 +24,8 @@ public class PlayerController : MonoBehaviour
     private GameManager gameManager;
     private SpriteRenderer spriteRenderer;
 
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -40,6 +42,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log("Is Grounded: " + isGrounded);
         // 檢測是否著地 - 即使在暫停模式也檢測，但不應用物理效果
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
