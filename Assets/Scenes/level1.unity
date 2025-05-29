@@ -1369,7 +1369,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 629975536}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.034, y: -0.013, z: -0.000015294552}
+  m_LocalPosition: {x: -0.0328, y: -0.0046, z: -0.000015294552}
   m_LocalScale: {x: -0.022754712, y: 0.055595096, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1536,7 +1536,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 655854595}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.7607, y: -1.0346, z: -0.06287366}
+  m_LocalPosition: {x: -4.36, y: -2.6, z: -0.06287366}
   m_LocalScale: {x: 5.7069397, y: 5.765133, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1622,7 +1622,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 320
   groundCheck: {fileID: 822467824}
-  groundCheckRadius: 0.15
+  groundCheckRadius: 0.2
   nextSceneName: level2
   goalDelayTime: 1
   debugMode: 1
@@ -1652,7 +1652,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd0e54bd0370d7479ae29e0b24b8b65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activityBox: {fileID: 1514668657}
+  activityBox: {fileID: 969644241}
   activityBoxUIContainer: {fileID: 1607752353}
   minBoxSize: 1
   maxBoxSize: 10
@@ -1740,8 +1740,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822467823}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.002, y: -0.04, z: 0}
-  m_LocalScale: {x: 0.16104676, y: 0.14067008, z: 3}
+  m_LocalPosition: {x: -0.0002, y: -0.0406, z: 0}
+  m_LocalScale: {x: 0.11548487, y: 0.10131949, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 655854597}
@@ -1809,7 +1809,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -2145,7 +2145,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.00033313036, y: 0.002472818}
@@ -2927,7 +2927,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1514668658}
   - component: {fileID: 1514668662}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ActivityBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2995,8 +2995,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1587546985}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.031, y: -0.014, z: -0.000015294552}
-  m_LocalScale: {x: -0.024163367, y: 0.051427346, z: 0}
+  m_LocalPosition: {x: 0.0307, y: -0.00286, z: -0.000015294552}
+  m_LocalScale: {x: -0.024163367, y: 0.057710223, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1765713220}
@@ -3671,7 +3671,7 @@ GameObject:
   - component: {fileID: 2075188035}
   - component: {fileID: 2075188034}
   m_Layer: 5
-  m_Name: Restart
+  m_Name: RestartButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3742,16 +3742,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11500000, guid: 9fd0e54bd0370d7479ae29e0b24b8b65, type: 3}
-        m_TargetAssemblyTypeName: UnityEngine.Object, UnityEngine
-        m_MethodName: set_name
-        m_Mode: 5
+      - m_Target: {fileID: 770326904}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: RestartGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: RestartGame()
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2075188035
