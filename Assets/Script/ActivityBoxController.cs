@@ -165,8 +165,6 @@ public class ActivityBoxController : MonoBehaviour
         }
     }
 
-
-
     private void UpdateSliderPanelPosition()
     {
         if (sliderPanel != null && mainCamera != null)

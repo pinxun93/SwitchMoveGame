@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
@@ -18,20 +19,20 @@ public class PlayerController : MonoBehaviour
 
     [Header("跳躍設置")]
     public float jumpForce = 10f;
-    public LayerMask groundLayer;         // 包含 Ground + Mask
+    public LayerMask groundLayer;         // 普通地面Layer
     public Transform groundCheck;
-    public float groundCheckRadius = 0.2f;
+    public float rayLength = 0.15f;       // 判斷腳下地面用射線長度
 
     [Header("關卡設置")]
-    public string nextSceneName = "";  // 下一關的場景名稱
-    public float goalDelayTime = 1f;   // 碰到Goal後的延遲時間
+    public string nextSceneName = "";
+    public float goalDelayTime = 1f;
 
     [Header("Debug設置")]
     public bool debugMode = false;
 
     private Rigidbody2D rb;
     private bool isGrounded;
-    private bool hasReachedGoal = false;  // 防止重複觸發
+    private bool hasReachedGoal = false;
     private bool isFacingRight = true;
     private GameManager gameManager;
     private SpriteRenderer spriteRenderer;
@@ -47,12 +48,22 @@ public class PlayerController : MonoBehaviour
         {
             spriteRenderer.flipX = false;
         }
+
+        if (debugMode)
+        {
+            Debug.Log($"[Awake] Rigidbody2D.gravityScale = {rb.gravityScale}, simulated = {rb.simulated}");
+        }
     }
 
     private void Update()
     {
-        // 判斷是否著地（現在包含 groundLayer 和 maskLayer）
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer | maskLayer);
+        CheckGrounded();
+
+        // 顯示物理狀態（偵錯用）
+        if (debugMode)
+        {
+            Debug.Log($"[Update] Velocity.y = {rb.velocity.y}, TimeScale = {Time.timeScale}, IsGrounded = {isGrounded}");
+        }
 
         // 暫停
         if (Input.GetMouseButtonDown(1))
@@ -78,6 +89,17 @@ public class PlayerController : MonoBehaviour
             CheckWallCollision();
             CheckMaskSideCollision();
             AutoMove();
+        }
+    }
+    private void CheckGrounded()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, Vector2.down, rayLength, groundLayer | maskLayer);
+        isGrounded = (hit.collider != null);
+
+        if (debugMode)
+        {
+            Debug.DrawRay(groundCheck.position, Vector2.down * rayLength, isGrounded ? Color.green : Color.red);
+            Debug.Log("Raycast Grounded: " + isGrounded);
         }
     }
 
@@ -119,7 +141,6 @@ public class PlayerController : MonoBehaviour
             hitMaskSide = Physics2D.OverlapCircle(maskCheckLeft.position, maskCheckRadius, maskLayer);
         }
 
-        // 只有當角色從側面碰到Mask且不是站在Mask上時才轉向
         if (hitMaskSide && !IsStandingOnMask())
         {
             Flip();
@@ -128,11 +149,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 檢查角色是否站在Mask上
     private bool IsStandingOnMask()
     {
-        // 檢查腳底是否接觸到Mask
-        return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, maskLayer);
+        // 直接用剛剛的 raycast 判斷，避免重複用 OverlapCircle
+        return isGrounded && Physics2D.Raycast(groundCheck.position, Vector2.down, rayLength, maskLayer);
     }
 
     public void Flip()
@@ -149,7 +169,6 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
     }
 
-    // 碰撞檢測 - 當碰到Goal時觸發
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Goal") && !hasReachedGoal)
@@ -158,15 +177,11 @@ public class PlayerController : MonoBehaviour
             if (debugMode)
                 Debug.Log("碰到Goal！準備進入下一關");
 
-            // 停止角色移動
             rb.velocity = Vector2.zero;
-
-            // 延遲後載入下一關
             Invoke("LoadNextLevel", goalDelayTime);
         }
     }
 
-    // 載入下一關
     private void LoadNextLevel()
     {
         if (!string.IsNullOrEmpty(nextSceneName))
@@ -175,7 +190,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // 如果沒有設定下一關名稱，嘗試載入下一個場景索引
             int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
             int nextSceneIndex = currentSceneIndex + 1;
 
@@ -187,16 +201,9 @@ public class PlayerController : MonoBehaviour
             {
                 if (debugMode)
                     Debug.Log("已經是最後一關！");
-                // 可以在這裡添加遊戲結束的邏輯
-                LoadFirstLevel();
+                SceneManager.LoadScene(0);
             }
         }
-    }
-
-    // 載入第一關（遊戲結束後重新開始）
-    private void LoadFirstLevel()
-    {
-        SceneManager.LoadScene(0);
     }
 
     private void OnDrawGizmosSelected()
@@ -204,7 +211,7 @@ public class PlayerController : MonoBehaviour
         if (groundCheck != null)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+            Gizmos.DrawWireSphere(groundCheck.position, rayLength);
         }
 
         if (wallCheckRight != null)

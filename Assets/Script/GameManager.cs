@@ -1,20 +1,21 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("¬¡°Ê®Ø³]¸m")]
+    [Header("æ´»å‹•æ¡†è¨­ç½®")]
     public GameObject activityBox;
-    public GameObject activityBoxUIContainer; // ¥]§tX¡BY¶b·Æ¶ôªºUI®e¾¹
+    public GameObject activityBoxUIContainer; // åŒ…å«Xã€Yè»¸æ»‘å¡Šçš„UIå®¹å™¨
     public float minBoxSize = 1f;
     public float maxBoxSize = 10f;
 
-    [Header("¨¤¦âÀË´ú³]¸m")]
-    public GameObject player; // ª±®a¨¤¦â
-    public Text gameOverText; // Åã¥Ü"You lose!"ªºUI¤å¦r
-    public GameObject gameOverPanel; // ¹CÀ¸µ²§ô­±ªO¡]¥i¿ï¡^
+    [Header("è§’è‰²æª¢æ¸¬è¨­ç½®")]
+    public GameObject player; // ç©å®¶è§’è‰²
+    public Text gameOverText; // é¡¯ç¤º"You lose!"çš„UIæ–‡å­—
+    public GameObject gameOverPanel; // éŠæˆ²çµæŸé¢æ¿ï¼ˆå¯é¸ï¼‰
 
-    [Header("Debug³]¸m")]
+    [Header("Debugè¨­ç½®")]
     public bool debugMode = false;
 
     private bool isPaused = false;
@@ -24,37 +25,60 @@ public class GameManager : MonoBehaviour
     private Collider boxCollider;
     private Collider playerCollider;
 
+    [Header("ç¯„åœæª¢æŸ¥")]
+    public Collider2D maskCollider;
+
+    private bool wasPaused = false;
+
     public bool IsPaused { get { return isPaused; } }
     public bool IsGameOver { get { return isGameOver; } }
 
     private void Start()
     {
-        // «O¦s¬¡°Ê®Øªºªì©l³]¸m
+        // æ–·é–‹ Player çš„çˆ¶ç‰©ä»¶ï¼ˆé˜²æ­¢è·Ÿè‘— Mask ç§»å‹•ï¼‰
+        if (player != null && player.transform.parent != null)
+        {
+            player.transform.SetParent(null);
+            if (debugMode)
+            {
+                Debug.Log("Player å·²å¾çˆ¶ç‰©ä»¶è„«é›¢ï¼Œé¿å…è¢« Mask ç§»å‹•å½±éŸ¿");
+            }
+        }
+
+        if (player != null)
+        {
+            Debug.Log("Player çš„ç›®å‰çˆ¶ç‰©ä»¶æ˜¯: " + player.transform.parent?.name);
+            player.transform.SetParent(null);
+            Debug.Log("Player å·²è„«é›¢çˆ¶ç‰©ä»¶ï¼æ–°çš„çˆ¶ç‰©ä»¶æ˜¯: " + player.transform.parent?.name);
+        }
+
+        // ä¿å­˜æ´»å‹•æ¡†çš„åˆå§‹è¨­ç½®
         if (activityBox != null)
         {
             boxInitialSize = activityBox.transform.localScale;
             boxInitialPosition = activityBox.transform.position;
             activityBox.SetActive(true);
 
-            // Àò¨ú¬¡°Ê®Øªº¸I¼²¾¹
+            // ç²å–æ´»å‹•æ¡†çš„ç¢°æ’å™¨
             boxCollider = activityBox.GetComponent<Collider>();
             if (boxCollider == null)
             {
-                Debug.LogWarning("¬¡°Ê®Ø¨S¦³Collider²Õ¥ó¡I½Ğ²K¥[¤@­ÓCollider¡C");
+                Debug.LogWarning("æ´»å‹•æ¡†æ²’æœ‰Colliderçµ„ä»¶ï¼è«‹æ·»åŠ ä¸€å€‹Colliderã€‚");
             }
         }
 
-        // Àò¨úª±®a¸I¼²¾¹
+        // ç²å–ç©å®¶ç¢°æ’å™¨
         if (player != null)
         {
             playerCollider = player.GetComponent<Collider>();
             if (playerCollider == null)
             {
-                Debug.LogWarning("ª±®a¨S¦³Collider²Õ¥ó¡I½Ğ²K¥[¤@­ÓCollider¡C");
+                Debug.LogWarning("ç©å®¶æ²’æœ‰Colliderçµ„ä»¶ï¼è«‹æ·»åŠ ä¸€å€‹Colliderã€‚");
             }
         }
+    
 
-        // ÁôÂÃUI®e¾¹©M¹CÀ¸µ²§ô¤å¦r
+        // éš±è—UIå®¹å™¨å’ŒéŠæˆ²çµæŸæ–‡å­—
         if (activityBoxUIContainer != null)
         {
             activityBoxUIContainer.SetActive(false);
@@ -70,17 +94,44 @@ public class GameManager : MonoBehaviour
             gameOverPanel.SetActive(false);
         }
 
-        // ±Ò°Ê®É¶¡
+        // å•Ÿå‹•æ™‚é–“
         Time.timeScale = 1f;
         isGameOver = false;
     }
 
     private void Update()
     {
-        // ¥u¦b¹CÀ¸¶i¦æ¤¤ÀË´ú¨¤¦â¦ì¸m
+        // åªåœ¨éŠæˆ²é€²è¡Œä¸­æª¢æ¸¬è§’è‰²ä½ç½®
         if (!isPaused && !isGameOver)
         {
             CheckPlayerInBounds();
+        }
+
+        // æª¢æŸ¥å¾æš«åœ â†’ æ¢å¾©çš„ç¬é–“ï¼Œç©å®¶æ˜¯å¦ä»åœ¨ Mask å…§
+        if (!IsPaused && wasPaused)
+        {
+            CheckPlayerInsideMask();
+        }
+        wasPaused = IsPaused;
+    }
+
+    private void CheckPlayerInsideMask()
+    {
+        if (maskCollider == null || player == null) return;
+
+        Vector2 playerPos = player.transform.position;
+
+        // ä½¿ç”¨ Collider2D çš„ OverlapPoint åˆ¤æ–·ç©å®¶æ˜¯å¦åœ¨ Mask ç¯„åœå…§
+        bool isInside = maskCollider.OverlapPoint(playerPos);
+
+        if (!isInside)
+        {
+            Debug.LogWarning("ç©å®¶ä¸åœ¨ Mask ç¯„åœå…§ï¼ŒéŠæˆ²çµæŸï¼");
+            GameOver();
+        }
+        else if (debugMode)
+        {
+            Debug.Log("ç©å®¶ä»åœ¨ Mask ç¯„åœå…§ï¼Œç¹¼çºŒéŠæˆ²");
         }
     }
 
@@ -89,10 +140,10 @@ public class GameManager : MonoBehaviour
         if (player == null || boxCollider == null)
             return;
 
-        // ÀË¬dª±®a¬O§_¦b¬¡°Ê®Ø½d³ò¤º
+        // æª¢æŸ¥ç©å®¶æ˜¯å¦åœ¨æ´»å‹•æ¡†ç¯„åœå…§
         bool isPlayerInBounds = boxCollider.bounds.Contains(player.transform.position);
 
-        // ¦pªG¨Ï¥Î§óºë½Tªº¸I¼²ÀË´ú
+        // å¦‚æœä½¿ç”¨æ›´ç²¾ç¢ºçš„ç¢°æ’æª¢æ¸¬
         if (playerCollider != null)
         {
             isPlayerInBounds = boxCollider.bounds.Intersects(playerCollider.bounds);
@@ -105,20 +156,20 @@ public class GameManager : MonoBehaviour
 
         if (debugMode)
         {
-            Debug.Log($"ª±®a¦ì¸m: {player.transform.position}, ¦b½d³ò¤º: {isPlayerInBounds}");
+            Debug.Log($"ç©å®¶ä½ç½®: {player.transform.position}, åœ¨ç¯„åœå…§: {isPlayerInBounds}");
         }
     }
 
     private void GameOver()
     {
-        if (isGameOver) return; // ¨¾¤î­«½ÆÄ²µo
+        if (isGameOver) return; // é˜²æ­¢é‡è¤‡è§¸ç™¼
 
         isGameOver = true;
 
-        // ¼È°±¹CÀ¸
+        // æš«åœéŠæˆ²
         Time.timeScale = 0f;
 
-        // Åã¥Ü¹CÀ¸µ²§ô°T®§
+        // é¡¯ç¤ºéŠæˆ²çµæŸè¨Šæ¯
         if (gameOverText != null)
         {
             gameOverText.text = "You lose!";
@@ -132,17 +183,16 @@ public class GameManager : MonoBehaviour
 
         if (debugMode)
         {
-            Debug.Log("¹CÀ¸µ²§ô¡G¨¤¦âÂ÷¶}¤F¬¡°Ê½d³ò¡I");
+            Debug.Log("éŠæˆ²çµæŸï¼šè§’è‰²é›¢é–‹äº†æ´»å‹•ç¯„åœï¼");
         }
     }
-
     public void RestartGame()
     {
-        // ­«¸m¹CÀ¸ª¬ºA
+        Debug.Log("Restart æŒ‰ä¸‹äº†ï¼");
+
         isGameOver = false;
         isPaused = false;
 
-        // ÁôÂÃ¹CÀ¸µ²§ôUI
         if (gameOverText != null)
         {
             gameOverText.gameObject.SetActive(false);
@@ -153,32 +203,33 @@ public class GameManager : MonoBehaviour
             gameOverPanel.SetActive(false);
         }
 
-        // ­«¸m¬¡°Ê®Ø¦ì¸m©M¤j¤p
         if (activityBox != null)
         {
             activityBox.transform.localScale = boxInitialSize;
             activityBox.transform.position = boxInitialPosition;
         }
 
-        // «ì´_®É¶¡
         Time.timeScale = 1f;
 
         if (debugMode)
         {
-            Debug.Log("¹CÀ¸¤w­«·s¶}©l");
+            Debug.Log("éŠæˆ²å·²é‡æ–°é–‹å§‹");
         }
+
+        // é‡æ–°è¼‰å…¥å ´æ™¯
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void TogglePause()
     {
-        if (isGameOver) return; // ¹CÀ¸µ²§ô®É¤£¯à¼È°±/Ä~Äò
+        if (isGameOver) return; // éŠæˆ²çµæŸæ™‚ä¸èƒ½æš«åœ/ç¹¼çºŒ
 
         isPaused = !isPaused;
         if (isPaused)
         {
-            // ¼È°±¹CÀ¸
+            // æš«åœéŠæˆ²
             Time.timeScale = 0f;
-            // Åã¥Ü¬¡°Ê®Ø©MUI®e¾¹
+            // é¡¯ç¤ºæ´»å‹•æ¡†å’ŒUIå®¹å™¨
             if (activityBox != null)
             {
                 activityBox.SetActive(true);
@@ -189,14 +240,14 @@ public class GameManager : MonoBehaviour
             }
             if (debugMode)
             {
-                Debug.Log("¹CÀ¸¤w¼È°±");
+                Debug.Log("éŠæˆ²å·²æš«åœ");
             }
         }
         else
         {
-            // Ä~Äò¹CÀ¸
+            // ç¹¼çºŒéŠæˆ²
             Time.timeScale = 1f;
-            // ÁôÂÃ¬¡°Ê®Ø©MUI®e¾¹
+            // éš±è—æ´»å‹•æ¡†å’ŒUIå®¹å™¨
             if (activityBox != null)
             {
                 activityBox.SetActive(true);
@@ -207,12 +258,12 @@ public class GameManager : MonoBehaviour
             }
             if (debugMode)
             {
-                Debug.Log("¹CÀ¸¤wÄ~Äò");
+                Debug.Log("éŠæˆ²å·²ç¹¼çºŒ");
             }
         }
     }
 
-    // ´£¨Ñµ¹¥~³¡½Õ¥Îªº¤èªk¡A¥Î©ó²¾°Ê¬¡°Ê®Ø¦Ó¤£¼vÅT¨¤¦â¦ì¸m
+    // æä¾›çµ¦å¤–éƒ¨èª¿ç”¨çš„æ–¹æ³•ï¼Œç”¨æ–¼ç§»å‹•æ´»å‹•æ¡†è€Œä¸å½±éŸ¿è§’è‰²ä½ç½®
     public void MoveActivityBox(Vector3 newPosition)
     {
         if (activityBox != null && isPaused)
@@ -221,17 +272,17 @@ public class GameManager : MonoBehaviour
 
             if (debugMode)
             {
-                Debug.Log($"¬¡°Ê®Ø²¾°Ê¨ì: {newPosition}");
+                Debug.Log($"æ´»å‹•æ¡†ç§»å‹•åˆ°: {newPosition}");
             }
         }
     }
 
-    // ´£¨Ñµ¹¥~³¡½Õ¥Îªº¤èªk¡A¥Î©ó½Õ¾ã¬¡°Ê®Ø¤j¤p
+    // æä¾›çµ¦å¤–éƒ¨èª¿ç”¨çš„æ–¹æ³•ï¼Œç”¨æ–¼èª¿æ•´æ´»å‹•æ¡†å¤§å°
     public void ResizeActivityBox(Vector3 newScale)
     {
         if (activityBox != null && isPaused)
         {
-            // ­­¨îÁY©ñ½d³ò
+            // é™åˆ¶ç¸®æ”¾ç¯„åœ
             float clampedX = Mathf.Clamp(newScale.x, minBoxSize, maxBoxSize);
             float clampedY = Mathf.Clamp(newScale.y, minBoxSize, maxBoxSize);
             float clampedZ = Mathf.Clamp(newScale.z, minBoxSize, maxBoxSize);
@@ -241,7 +292,7 @@ public class GameManager : MonoBehaviour
 
             if (debugMode)
             {
-                Debug.Log($"¬¡°Ê®ØÁY©ñ¨ì: {clampedScale}");
+                Debug.Log($"æ´»å‹•æ¡†ç¸®æ”¾åˆ°: {clampedScale}");
             }
         }
     }

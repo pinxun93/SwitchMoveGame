@@ -1369,8 +1369,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 629975536}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.028703308, y: -0.017, z: -0.000015294552}
-  m_LocalScale: {x: -0.022754712, y: 0.06462292, z: 0}
+  m_LocalPosition: {x: -0.034, y: -0.013, z: -0.000015294552}
+  m_LocalScale: {x: -0.022754712, y: 0.055595096, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1765713220}
@@ -1536,8 +1536,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 655854595}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.7781, y: -1.0346, z: -0.06287366}
-  m_LocalScale: {x: 5.272, y: 5.765133, z: 0}
+  m_LocalPosition: {x: -4.7607, y: -1.0346, z: -0.06287366}
+  m_LocalScale: {x: 5.7069397, y: 5.765133, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 822467824}
@@ -1613,7 +1613,7 @@ MonoBehaviour:
   wallCheckRadius: 0.2
   maskLayer:
     serializedVersion: 2
-    m_Bits: 328
+    m_Bits: 264
   maskCheckRight: {fileID: 1587546986}
   maskCheckLeft: {fileID: 629975537}
   maskCheckRadius: 0.2
@@ -1622,8 +1622,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 320
   groundCheck: {fileID: 822467824}
-  groundCheckRadius: 0.2
-  nextSceneName: 
+  groundCheckRadius: 0.15
+  nextSceneName: level2
   goalDelayTime: 1
   debugMode: 1
 --- !u!114 &655854604
@@ -1660,6 +1660,7 @@ MonoBehaviour:
   gameOverText: {fileID: 1277590534}
   gameOverPanel: {fileID: 1735174732}
   debugMode: 1
+  maskCollider: {fileID: 969644244}
 --- !u!1 &770326902
 GameObject:
   m_ObjectHideFlags: 0
@@ -1708,10 +1709,11 @@ MonoBehaviour:
   activityBoxUIContainer: {fileID: 1607752353}
   minBoxSize: 1
   maxBoxSize: 10
-  player: {fileID: 0}
-  gameOverText: {fileID: 0}
-  gameOverPanel: {fileID: 0}
+  player: {fileID: 655854595}
+  gameOverText: {fileID: 1277590534}
+  gameOverPanel: {fileID: 1735174732}
   debugMode: 1
+  maskCollider: {fileID: 969644244}
 --- !u!1 &822467823
 GameObject:
   m_ObjectHideFlags: 0
@@ -1738,8 +1740,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 822467823}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.001, y: -0.019, z: 0}
-  m_LocalScale: {x: 0.24665871, y: 0.2522246, z: 3}
+  m_LocalPosition: {x: -0.002, y: -0.04, z: 0}
+  m_LocalScale: {x: 0.16104676, y: 0.14067008, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 655854597}
@@ -1807,7 +1809,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -2059,6 +2061,7 @@ GameObject:
   - component: {fileID: 969644243}
   - component: {fileID: 969644244}
   - component: {fileID: 969644245}
+  - component: {fileID: 969644246}
   m_Layer: 8
   m_Name: MaskSprite
   m_TagString: Untagged
@@ -2142,10 +2145,10 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.00033313036, y: 0}
+  m_Offset: {x: 0.00033313036, y: 0.002472818}
   m_SpriteTilingProperty:
     border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
     pivot: {x: 0.5, y: 0.5}
@@ -2156,7 +2159,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.99943364, y: 1}
+  m_Size: {x: 0.99943364, y: 0.99999964}
   m_EdgeRadius: 0
 --- !u!114 &969644245
 MonoBehaviour:
@@ -2176,6 +2179,27 @@ MonoBehaviour:
   sliderPanel: {fileID: 1607752354}
   canvas: {fileID: 70340529}
   sliderOffsetY: 50
+--- !u!50 &969644246
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 969644241}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &1005413211
 GameObject:
   m_ObjectHideFlags: 0
@@ -2186,8 +2210,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1005413212}
   - component: {fileID: 1005413213}
-  - component: {fileID: 1005413214}
   - component: {fileID: 1005413215}
+  - component: {fileID: 1005413216}
   m_Layer: 5
   m_Name: Y Slider
   m_TagString: Untagged
@@ -2269,24 +2293,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1005413214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1005413211}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2e01de91030b7947b139c2203ac6ec3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mask: {fileID: 0}
-  widthSlider: {fileID: 0}
-  heightSlider: {fileID: 0}
-  sliderPanel: {fileID: 0}
-  canvas: {fileID: 0}
-  sliderOffsetY: 50
 --- !u!212 &1005413215
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2339,6 +2345,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1005413216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1005413211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2e01de91030b7947b139c2203ac6ec3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mask: {fileID: 969644242}
+  widthSlider: {fileID: 1005413213}
+  heightSlider: {fileID: 1427232385}
+  sliderPanel: {fileID: 1607752354}
+  canvas: {fileID: 70340529}
+  sliderOffsetY: 100
 --- !u!1 &1071044775
 GameObject:
   m_ObjectHideFlags: 0
@@ -2740,8 +2764,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1427232384}
   - component: {fileID: 1427232385}
-  - component: {fileID: 1427232386}
   - component: {fileID: 1427232387}
+  - component: {fileID: 1427232388}
   m_Layer: 5
   m_Name: X Slider
   m_TagString: Untagged
@@ -2823,24 +2847,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1427232386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1427232383}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2e01de91030b7947b139c2203ac6ec3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mask: {fileID: 0}
-  widthSlider: {fileID: 0}
-  heightSlider: {fileID: 0}
-  sliderPanel: {fileID: 0}
-  canvas: {fileID: 0}
-  sliderOffsetY: 50
 --- !u!212 &1427232387
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2893,6 +2899,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1427232388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427232383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2e01de91030b7947b139c2203ac6ec3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mask: {fileID: 969644242}
+  widthSlider: {fileID: 1005413213}
+  heightSlider: {fileID: 1427232385}
+  sliderPanel: {fileID: 1607752354}
+  canvas: {fileID: 70340529}
+  sliderOffsetY: 100
 --- !u!1 &1514668657
 GameObject:
   m_ObjectHideFlags: 0
@@ -2971,8 +2995,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1587546985}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.030567933, y: -0.019, z: -0.000015294552}
-  m_LocalScale: {x: -0.024163367, y: 0.06303453, z: 0}
+  m_LocalPosition: {x: 0.031, y: -0.014, z: -0.000015294552}
+  m_LocalScale: {x: -0.024163367, y: 0.051427346, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1765713220}
@@ -3717,7 +3741,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2075188035}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11500000, guid: 9fd0e54bd0370d7479ae29e0b24b8b65, type: 3}
+        m_TargetAssemblyTypeName: UnityEngine.Object, UnityEngine
+        m_MethodName: set_name
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: RestartGame()
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2075188035
 MonoBehaviour:
   m_ObjectHideFlags: 0

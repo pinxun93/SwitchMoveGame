@@ -42,11 +42,10 @@ public class UIActivityControl : MonoBehaviour
         if (sliderPanel != null)
             sliderPanel.gameObject.SetActive(false);
 
-        // 確保 mask 上有 Collider2D
         if (mask != null && mask.GetComponent<Collider2D>() == null)
         {
             BoxCollider2D col = mask.gameObject.AddComponent<BoxCollider2D>();
-            col.isTrigger = true;
+            col.isTrigger = false; // ✅ 關掉 Trigger，讓它成為實體碰撞
         }
     }
 
