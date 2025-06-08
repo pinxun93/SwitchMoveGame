@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class checkMask : MonoBehaviour
 {
-
     private void OnTriggerExit2D(Collider2D other)
     {
         if(other.name == "MaskSprite")

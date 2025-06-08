@@ -22,11 +22,6 @@ public class GameManager : MonoBehaviour
     private bool isGameOver = false;
     private Vector3 boxInitialSize;
     private Vector3 boxInitialPosition;
-    private Collider boxCollider;
-    private Collider playerCollider;
-
-    [Header("範圍檢查")]
-    public Collider2D maskCollider;
 
     private bool wasPaused = false;
 
@@ -40,16 +35,7 @@ public class GameManager : MonoBehaviour
         {
             player.transform.SetParent(null);
             if (debugMode)
-            {
                 Debug.Log("Player 已從父物件脫離，避免被 Mask 移動影響");
-            }
-        }
-
-        if (player != null)
-        {
-            Debug.Log("Player 的目前父物件是: " + player.transform.parent?.name);
-            player.transform.SetParent(null);
-            Debug.Log("Player 已脫離父物件！新的父物件是: " + player.transform.parent?.name);
         }
 
         // 保存活動框的初始設置
@@ -58,41 +44,17 @@ public class GameManager : MonoBehaviour
             boxInitialSize = activityBox.transform.localScale;
             boxInitialPosition = activityBox.transform.position;
             activityBox.SetActive(true);
-
-            // 獲取活動框的碰撞器
-            boxCollider = activityBox.GetComponent<Collider>();
-            if (boxCollider == null)
-            {
-                Debug.LogWarning("活動框沒有Collider組件！請添加一個Collider。");
-            }
         }
-
-        // 獲取玩家碰撞器
-        if (player != null)
-        {
-            playerCollider = player.GetComponent<Collider>();
-            if (playerCollider == null)
-            {
-                Debug.LogWarning("玩家沒有Collider組件！請添加一個Collider。");
-            }
-        }
-    
 
         // 隱藏UI容器和遊戲結束文字
         if (activityBoxUIContainer != null)
-        {
             activityBoxUIContainer.SetActive(false);
-        }
 
         if (gameOverText != null)
-        {
             gameOverText.gameObject.SetActive(false);
-        }
 
         if (gameOverPanel != null)
-        {
             gameOverPanel.SetActive(false);
-        }
 
         // 啟動時間
         Time.timeScale = 1f;
@@ -101,53 +63,35 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // 只在遊戲進行中檢測角色位置
         if (!isPaused && !isGameOver)
         {
             CheckPlayerInBounds();
         }
 
-        // 檢查從暫停 → 恢復的瞬間，玩家是否仍在 Mask 內
-        if (!IsPaused && wasPaused)
-        {
-            CheckPlayerInsideMask();
-        }
         wasPaused = IsPaused;
     }
 
-    private void CheckPlayerInsideMask()
-    {
-        if (maskCollider == null || player == null) return;
-
-        Vector2 playerPos = player.transform.position;
-
-        // 使用 Collider2D 的 OverlapPoint 判斷玩家是否在 Mask 範圍內
-        bool isInside = maskCollider.OverlapPoint(playerPos);
-
-        if (!isInside)
-        {
-            Debug.LogWarning("玩家不在 Mask 範圍內，遊戲結束！");
-            GameOver();
-        }
-        else if (debugMode)
-        {
-            Debug.Log("玩家仍在 Mask 範圍內，繼續遊戲");
-        }
-    }
-
+    // 以活動框的位置和大小判斷玩家是否在範圍內
     private void CheckPlayerInBounds()
     {
-        if (player == null || boxCollider == null)
+        if (player == null || activityBox == null)
             return;
 
-        // 檢查玩家是否在活動框範圍內
-        bool isPlayerInBounds = boxCollider.bounds.Contains(player.transform.position);
+        Vector3 boxPos = activityBox.transform.position;
+        Vector3 boxScale = activityBox.transform.localScale;
 
-        // 如果使用更精確的碰撞檢測
-        if (playerCollider != null)
-        {
-            isPlayerInBounds = boxCollider.bounds.Intersects(playerCollider.bounds);
-        }
+        // 假設活動框的中心為 boxPos，尺寸為 boxScale (假設是正方形/長方形)
+        // 判斷玩家位置是否在活動框的X與Y區間內
+
+        Vector3 playerPos = player.transform.position;
+
+        float halfWidth = boxScale.x / 2f;
+        float halfHeight = boxScale.y / 2f;
+
+        bool isInX = playerPos.x >= (boxPos.x - halfWidth) && playerPos.x <= (boxPos.x + halfWidth);
+        bool isInY = playerPos.y >= (boxPos.y - halfHeight) && playerPos.y <= (boxPos.y + halfHeight);
+
+        bool isPlayerInBounds = isInX && isInY;
 
         if (!isPlayerInBounds)
         {
@@ -156,13 +100,13 @@ public class GameManager : MonoBehaviour
 
         if (debugMode)
         {
-            Debug.Log($"玩家位置: {player.transform.position}, 在範圍內: {isPlayerInBounds}");
+            Debug.Log($"玩家位置: {playerPos}, 活動框中心: {boxPos}, 範圍X: [{boxPos.x - halfWidth}, {boxPos.x + halfWidth}], 範圍Y: [{boxPos.y - halfHeight}, {boxPos.y + halfHeight}], 在範圍內: {isPlayerInBounds}");
         }
     }
 
     private void GameOver()
     {
-        if (isGameOver) return; // 防止重複觸發
+        if (isGameOver) return;
 
         isGameOver = true;
 
@@ -186,22 +130,22 @@ public class GameManager : MonoBehaviour
             Debug.Log("遊戲結束：角色離開了活動範圍！");
         }
     }
+
     public void RestartGame()
     {
-        Debug.Log("Restart 按下了！");
+        if (debugMode)
+        {
+            Debug.Log("Restart 按下了！");
+        }
 
         isGameOver = false;
         isPaused = false;
 
         if (gameOverText != null)
-        {
             gameOverText.gameObject.SetActive(false);
-        }
 
         if (gameOverPanel != null)
-        {
             gameOverPanel.SetActive(false);
-        }
 
         if (activityBox != null)
         {
@@ -222,48 +166,37 @@ public class GameManager : MonoBehaviour
 
     public void TogglePause()
     {
-        if (isGameOver) return; // 遊戲結束時不能暫停/繼續
+        if (isGameOver) return;
 
         isPaused = !isPaused;
         if (isPaused)
         {
-            // 暫停遊戲
             Time.timeScale = 0f;
-            // 顯示活動框和UI容器
+
             if (activityBox != null)
-            {
                 activityBox.SetActive(true);
-            }
+
             if (activityBoxUIContainer != null)
-            {
                 activityBoxUIContainer.SetActive(true);
-            }
+
             if (debugMode)
-            {
                 Debug.Log("遊戲已暫停");
-            }
         }
         else
         {
-            // 繼續遊戲
             Time.timeScale = 1f;
-            // 隱藏活動框和UI容器
+
             if (activityBox != null)
-            {
                 activityBox.SetActive(true);
-            }
+
             if (activityBoxUIContainer != null)
-            {
                 activityBoxUIContainer.SetActive(false);
-            }
+
             if (debugMode)
-            {
                 Debug.Log("遊戲已繼續");
-            }
         }
     }
 
-    // 提供給外部調用的方法，用於移動活動框而不影響角色位置
     public void MoveActivityBox(Vector3 newPosition)
     {
         if (activityBox != null && isPaused)
@@ -271,18 +204,14 @@ public class GameManager : MonoBehaviour
             activityBox.transform.position = newPosition;
 
             if (debugMode)
-            {
                 Debug.Log($"活動框移動到: {newPosition}");
-            }
         }
     }
 
-    // 提供給外部調用的方法，用於調整活動框大小
     public void ResizeActivityBox(Vector3 newScale)
     {
         if (activityBox != null && isPaused)
         {
-            // 限制縮放範圍
             float clampedX = Mathf.Clamp(newScale.x, minBoxSize, maxBoxSize);
             float clampedY = Mathf.Clamp(newScale.y, minBoxSize, maxBoxSize);
             float clampedZ = Mathf.Clamp(newScale.z, minBoxSize, maxBoxSize);
@@ -291,9 +220,7 @@ public class GameManager : MonoBehaviour
             activityBox.transform.localScale = clampedScale;
 
             if (debugMode)
-            {
                 Debug.Log($"活動框縮放到: {clampedScale}");
-            }
         }
     }
 }

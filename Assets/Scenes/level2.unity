@@ -489,7 +489,7 @@ GameObject:
   m_Component:
   - component: {fileID: 212017589}
   m_Layer: 0
-  m_Name: Level1
+  m_Name: Level2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1664,7 +1664,11 @@ MonoBehaviour:
   activityBoxUIContainer: {fileID: 1607752353}
   minBoxSize: 1
   maxBoxSize: 10
+  player: {fileID: 0}
+  gameOverText: {fileID: 0}
+  gameOverPanel: {fileID: 0}
   debugMode: 1
+  maskCollider: {fileID: 0}
 --- !u!1 &822467823
 GameObject:
   m_ObjectHideFlags: 0
@@ -2027,7 +2031,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 969644241}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -335.38, y: -214.03, z: -0.062950134}
+  m_LocalPosition: {x: -340.49, y: -217.41, z: -0.062950134}
   m_LocalScale: {x: 5, y: 5, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
