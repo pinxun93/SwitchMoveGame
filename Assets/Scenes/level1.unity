@@ -1757,7 +1757,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 6200000, guid: bc7c567f4aeba6741ad9b49f54ca2276, type: 2}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -2221,6 +2221,7 @@ GameObject:
   - component: {fileID: 969644245}
   - component: {fileID: 969644246}
   - component: {fileID: 969644247}
+  - component: {fileID: 969644248}
   m_Layer: 8
   m_Name: MaskSprite
   m_TagString: Untagged
@@ -2360,6 +2361,19 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &969644248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 969644241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9025ec0ef03413b43ac5779664e7be08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugMode: 1
 --- !u!1 &1005413211
 GameObject:
   m_ObjectHideFlags: 0
@@ -2721,6 +2735,7 @@ GameObject:
   - component: {fileID: 1271925252}
   - component: {fileID: 1271925254}
   - component: {fileID: 1271925253}
+  - component: {fileID: 1271925255}
   m_Layer: 8
   m_Name: MaskPlatform
   m_TagString: Untagged
@@ -2821,6 +2836,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1271925255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1271925251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9025ec0ef03413b43ac5779664e7be08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugMode: 0
 --- !u!1 &1277590532
 GameObject:
   m_ObjectHideFlags: 0
