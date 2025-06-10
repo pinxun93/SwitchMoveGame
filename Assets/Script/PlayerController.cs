@@ -15,11 +15,13 @@ public class PlayerController : MonoBehaviour
     public LayerMask maskLayer;
     public Transform maskCheckRight;
     public Transform maskCheckLeft;
+    public Transform maskCheckTop;
+    public Transform maskCheckBottom;
     public float maskCheckRadius = 0.2f;
 
     [Header("跳躍設置")]
     public float jumpForce = 10f;
-    public LayerMask groundLayer;       // 普通地面Layer
+    public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.2f;
 
@@ -42,8 +44,6 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        // 嘗試取得Collider2D（本物件或子物件）
         playerCollider = GetComponent<Collider2D>() ?? GetComponentInChildren<Collider2D>();
 
         if (playerCollider == null)
@@ -51,15 +51,13 @@ public class PlayerController : MonoBehaviour
         else if (debugMode)
             Debug.Log("找到 Player 的 Collider2D：" + playerCollider.GetType().Name);
 
-        // 找GameManager
         gameManager = FindObjectOfType<GameManager>();
         if (gameManager == null)
-            Debug.LogError("找不到 GameManager！請確認場景中有 GameManager 物件。");
+            Debug.LogError("找不到 GameManager！");
     }
 
     private void Start()
     {
-        // 解除Player父物件，避免受Mask移動影響
         if (transform.parent != null)
         {
             transform.SetParent(null);
@@ -70,10 +68,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // 判斷是否著地（地面或Mask）
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer | maskLayer);
+        isGrounded = IsGrounded();
 
-        // 按右鍵暫停/繼續遊戲
         if (Input.GetMouseButtonDown(1))
         {
             gameManager.TogglePause();
@@ -81,21 +77,46 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("暫停狀態: " + gameManager.IsPaused);
         }
 
-        // 按左鍵跳躍
-        if (Input.GetMouseButtonDown(0) && !gameManager.IsPaused && isGrounded)
+        if (Input.GetMouseButtonDown(0) && !gameManager.IsPaused && isGrounded && !IsTouchingMaskAbove())
         {
             Jump();
             if (debugMode)
                 Debug.Log("跳躍！");
         }
 
-        // 遊戲未暫停且未達成目標時，自動移動並檢查碰撞
         if (!gameManager.IsPaused && !hasReachedGoal)
         {
             CheckWallCollision();
             CheckMaskSideCollision();
             AutoMove();
         }
+    }
+
+    private bool IsGrounded()
+    {
+        bool onGround = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        bool onMask = maskCheckBottom != null &&
+                      Physics2D.OverlapCircle(maskCheckBottom.position, maskCheckRadius, maskLayer);
+
+        if (debugMode)
+        {
+            Debug.Log("OnGround: " + onGround);
+            Debug.Log("OnMask: " + onMask);
+        }
+
+        return onGround || onMask;
+    }
+
+    private bool IsTouchingMaskAbove()
+    {
+        if (maskCheckTop == null) return false;
+
+        bool topBlocked = Physics2D.OverlapCircle(maskCheckTop.position, maskCheckRadius, maskLayer);
+
+        if (debugMode)
+            Debug.Log("上方遮擋: " + topBlocked);
+
+        return topBlocked;
     }
 
     private void AutoMove()
@@ -124,7 +145,6 @@ public class PlayerController : MonoBehaviour
         else if (!isFacingRight && maskCheckLeft != null)
             hitMaskSide = Physics2D.OverlapCircle(maskCheckLeft.position, maskCheckRadius, maskLayer);
 
-        // 從側面碰到Mask且不站在Mask上時轉向
         if (hitMaskSide && !IsStandingOnMask())
         {
             Flip();
@@ -133,10 +153,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 檢查是否站在Mask上
     private bool IsStandingOnMask()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, maskLayer);
+        return maskCheckBottom != null &&
+               Physics2D.OverlapCircle(maskCheckBottom.position, maskCheckRadius, maskLayer);
     }
 
     public void Flip()
@@ -190,6 +210,16 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+        }
+        if (maskCheckBottom != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(maskCheckBottom.position, maskCheckRadius);
+        }
+        if (maskCheckTop != null)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(maskCheckTop.position, maskCheckRadius);
         }
         if (wallCheckRight != null)
         {
