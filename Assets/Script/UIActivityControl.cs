@@ -20,7 +20,7 @@ public class UIActivityControl : MonoBehaviour
     {
         if (mask != null)
         {
-            mask.localScale = new Vector3(4f, 4f, 4f); // 初始大小
+            mask.localScale = new Vector3(3f, 3f, 3f); // 初始大小
         }
 
         if (widthSlider != null)

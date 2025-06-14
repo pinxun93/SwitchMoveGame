@@ -290,7 +290,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 969644242}
+  - {fileID: 969644249}
   - {fileID: 1607752354}
   - {fileID: 1735174733}
   m_Father: {fileID: 1514668658}
@@ -1647,7 +1647,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 655854595}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.94, y: -0.36, z: -0.06287366}
+  m_LocalPosition: {x: -4.17, y: -0.91, z: -0.06287366}
   m_LocalScale: {x: 5.7069397, y: 5.765133, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1712,6 +1712,8 @@ MonoBehaviour:
   groundCheckRadius: 0.2
   nextSceneName: level2
   goalDelayTime: 1
+  pausedAlpha: 0.47
+  pausedLayer: 31
   debugMode: 1
 --- !u!114 &655854604
 MonoBehaviour:
@@ -1725,7 +1727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c067d404fbc5604685d345e80731fcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maskObject: {fileID: 969644242}
+  maskObject: {fileID: 969644249}
   uiCamera: {fileID: 519420031}
 --- !u!114 &655854605
 MonoBehaviour:
@@ -1743,6 +1745,7 @@ MonoBehaviour:
   activityBoxUIContainer: {fileID: 1607752353}
   minBoxSize: 1
   maxBoxSize: 10
+  maskSprite: {fileID: 0}
   player: {fileID: 655854595}
   gameOverText: {fileID: 1277590534}
   gameOverPanel: {fileID: 1735174732}
@@ -1811,6 +1814,7 @@ MonoBehaviour:
   activityBoxUIContainer: {fileID: 1607752353}
   minBoxSize: 1
   maxBoxSize: 10
+  maskSprite: {fileID: 969644249}
   player: {fileID: 655854595}
   gameOverText: {fileID: 1277590534}
   gameOverPanel: {fileID: 1735174732}
@@ -2216,7 +2220,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 969644242}
+  - component: {fileID: 969644249}
   - component: {fileID: 969644243}
   - component: {fileID: 969644245}
   - component: {fileID: 969644246}
@@ -2229,22 +2233,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &969644242
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 969644241}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -325.12, y: -200.75, z: -0.062950134}
-  m_LocalScale: {x: 4.0424, y: 4, z: 0}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1271925252}
-  m_Father: {fileID: 70340530}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!331 &969644243
 SpriteMask:
   m_ObjectHideFlags: 0
@@ -2295,7 +2283,7 @@ SpriteMask:
   m_FrontSortingOrder: 0
   m_BackSortingOrder: 0
   m_IsCustomRangeActive: 0
-  m_SpriteSortPoint: 1
+  m_SpriteSortPoint: 0
 --- !u!114 &969644245
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2308,7 +2296,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e01de91030b7947b139c2203ac6ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mask: {fileID: 969644242}
+  mask: {fileID: 969644249}
   widthSlider: {fileID: 1005413213}
   heightSlider: {fileID: 1427232385}
   sliderPanel: {fileID: 1607752354}
@@ -2374,6 +2362,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugMode: 1
+--- !u!224 &969644249
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 969644241}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.062950134}
+  m_LocalScale: {x: 3, y: 3, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1271925252}
+  m_Father: {fileID: 70340530}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -325.12, y: -200.75}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1005413211
 GameObject:
   m_ObjectHideFlags: 0
@@ -2531,7 +2540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e01de91030b7947b139c2203ac6ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mask: {fileID: 969644242}
+  mask: {fileID: 0}
   widthSlider: {fileID: 1005413213}
   heightSlider: {fileID: 1427232385}
   sliderPanel: {fileID: 1607752354}
@@ -2755,7 +2764,7 @@ Transform:
   m_LocalScale: {x: 1, y: 0.011478811, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 969644242}
+  m_Father: {fileID: 969644249}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1271925253
@@ -3210,7 +3219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e01de91030b7947b139c2203ac6ec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mask: {fileID: 969644242}
+  mask: {fileID: 0}
   widthSlider: {fileID: 1005413213}
   heightSlider: {fileID: 1427232385}
   sliderPanel: {fileID: 1607752354}
@@ -3242,7 +3251,7 @@ Transform:
   m_GameObject: {fileID: 1514668657}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.29131696, y: 2.2753618, z: -0.06287366}
-  m_LocalScale: {x: 4, y: 4, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 70340530}

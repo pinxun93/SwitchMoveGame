@@ -29,6 +29,11 @@ public class PlayerController : MonoBehaviour
     public string nextSceneName = "";
     public float goalDelayTime = 1f;
 
+    [Header("暫停視覺效果")]
+    [Range(0f, 1f)]
+    public float pausedAlpha = 0.3f; // 暫停時的透明度
+    public int pausedLayer = 31; // 暫停時的獨立層級 (通常31是unused layer)
+
     [Header("Debug設置")]
     public bool debugMode = false;
 
@@ -40,11 +45,23 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Collider2D playerCollider;
 
+    private Vector3 lockedPosition;
+    private bool isPositionLocked = false;
+    private bool wasGamePaused = false;
+    private float originalAlpha; // 儲存原始透明度
+    private int originalLayer; // 儲存原始層級
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         playerCollider = GetComponent<Collider2D>() ?? GetComponentInChildren<Collider2D>();
+
+        // 儲存原始透明度和層級
+        if (spriteRenderer != null)
+            originalAlpha = spriteRenderer.color.a;
+
+        originalLayer = gameObject.layer;
 
         if (playerCollider == null)
             Debug.LogError("Player 物件及其子物件都沒有 Collider2D！");
@@ -58,16 +75,13 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        if (transform.parent != null)
-        {
-            transform.SetParent(null);
-            if (debugMode)
-                Debug.Log("解除 Player 的父物件");
-        }
+        ForceDetachFromParent();
     }
 
     private void Update()
     {
+        HandlePausePositionLock();
+
         isGrounded = IsGrounded();
 
         if (Input.GetMouseButtonDown(1))
@@ -89,6 +103,120 @@ public class PlayerController : MonoBehaviour
             CheckWallCollision();
             CheckMaskSideCollision();
             AutoMove();
+        }
+    }
+
+    private void HandlePausePositionLock()
+    {
+        bool isCurrentlyPaused = gameManager != null && gameManager.IsPaused;
+
+        if (isCurrentlyPaused && !wasGamePaused)
+        {
+            LockPlayerPosition();
+            SetPlayerTransparency(pausedAlpha); // 設置為半透明
+        }
+        else if (isCurrentlyPaused && isPositionLocked)
+        {
+            ForcePlayerToLockedPosition();
+        }
+        else if (!isCurrentlyPaused && wasGamePaused)
+        {
+            UnlockPlayerPosition();
+            SetPlayerTransparency(originalAlpha); // 恢復原始透明度
+        }
+
+        wasGamePaused = isCurrentlyPaused;
+    }
+
+    private void SetPlayerTransparency(float alpha)
+    {
+        if (spriteRenderer != null)
+        {
+            Color color = spriteRenderer.color;
+            color.a = alpha;
+            spriteRenderer.color = color;
+
+            if (debugMode)
+                Debug.Log($"設置玩家透明度: {alpha}");
+        }
+    }
+
+    private void LockPlayerPosition()
+    {
+        lockedPosition = transform.position;
+        isPositionLocked = true;
+        ForceDetachFromParent();
+
+        // 將玩家移到獨立層級，避免與其他物件交互
+        gameObject.layer = pausedLayer;
+
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.simulated = false; // 完全停止物理模擬
+        }
+
+        // 禁用碰撞器，防止被其他物件拖動
+        if (playerCollider != null)
+        {
+            playerCollider.enabled = false;
+        }
+
+        if (debugMode)
+            Debug.Log($"鎖定玩家位置: {lockedPosition}，移至層級: {pausedLayer}");
+    }
+
+    private void ForcePlayerToLockedPosition()
+    {
+        if (isPositionLocked)
+        {
+            transform.position = lockedPosition;
+            ForceDetachFromParent();
+
+            if (rb != null)
+                rb.velocity = Vector2.zero;
+        }
+    }
+
+    private void UnlockPlayerPosition()
+    {
+        isPositionLocked = false;
+
+        // 恢復原始層級
+        gameObject.layer = originalLayer;
+
+        if (rb != null)
+        {
+            rb.simulated = true; // 重新啟用物理模擬
+            rb.bodyType = RigidbodyType2D.Dynamic;
+        }
+
+        // 重新啟用碰撞器
+        if (playerCollider != null)
+        {
+            playerCollider.enabled = true;
+        }
+
+        if (debugMode)
+            Debug.Log($"解鎖玩家位置，恢復至層級: {originalLayer}");
+    }
+
+    private void ForceDetachFromParent()
+    {
+        if (transform.parent != null)
+        {
+            transform.SetParent(null);
+            if (debugMode)
+                Debug.Log("強制解除 Player 的父物件關係");
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (isPositionLocked)
+        {
+            transform.position = lockedPosition;
+            ForceDetachFromParent();
         }
     }
 
@@ -121,6 +249,8 @@ public class PlayerController : MonoBehaviour
 
     private void AutoMove()
     {
+        if (gameManager != null && gameManager.IsPaused) return;
+
         float direction = isFacingRight ? 1f : -1f;
         rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
     }
@@ -168,6 +298,8 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        if (gameManager != null && gameManager.IsPaused) return;
+
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
     }
 
@@ -203,6 +335,10 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    public bool IsPositionLocked() => isPositionLocked;
+
+    public Vector3 GetLockedPosition() => lockedPosition;
 
     private void OnDrawGizmosSelected()
     {
@@ -240,6 +376,13 @@ public class PlayerController : MonoBehaviour
         {
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(maskCheckLeft.position, maskCheckRadius);
+        }
+
+        if (isPositionLocked)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawWireSphere(lockedPosition, 0.5f);
+            Gizmos.DrawLine(transform.position, lockedPosition);
         }
     }
 }
