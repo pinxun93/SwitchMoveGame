@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Goal
   - Flag
+  - Mask
   layers:
   - Default
   - TransparentFX

@@ -380,6 +380,7 @@ GameObject:
   - component: {fileID: 173763008}
   - component: {fileID: 173763010}
   - component: {fileID: 173763009}
+  - component: {fileID: 173763011}
   m_Layer: 0
   m_Name: Flag
   m_TagString: Flag
@@ -480,6 +481,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 1
   m_SpriteSortPoint: 0
+--- !u!114 &173763011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173763007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 106c9e0cfd5ab514283c91d9137bfee0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &184092440
 GameObject:
   m_ObjectHideFlags: 0
@@ -641,7 +654,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 193961011}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.74, y: 1.53, z: 0.020909667}
+  m_LocalPosition: {x: 3.1, y: -4.83, z: 0.020909667}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1204,7 +1217,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.22352941}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.39215687}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1939,7 +1952,7 @@ MonoBehaviour:
     m_Bits: 320
   groundCheck: {fileID: 822467824}
   groundCheckRadius: 0.2
-  nextSceneName: level2
+  nextSceneName: 0
   goalDelayTime: 1
   pausedAlpha: 0.47
   pausedLayer: 31
@@ -1974,11 +1987,11 @@ MonoBehaviour:
   activityBoxUIContainer: {fileID: 1607752353}
   minBoxSize: 1
   maxBoxSize: 10
-  maskSprite: {fileID: 0}
   player: {fileID: 655854595}
   gameOverText: {fileID: 1277590534}
   gameOverPanel: {fileID: 1735174732}
   debugMode: 1
+  resumeBufferDuration: 2
 --- !u!70 &655854606
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -2043,11 +2056,11 @@ MonoBehaviour:
   activityBoxUIContainer: {fileID: 1607752353}
   minBoxSize: 1
   maxBoxSize: 10
-  maskSprite: {fileID: 969644249}
   player: {fileID: 655854595}
   gameOverText: {fileID: 1277590534}
   gameOverPanel: {fileID: 1735174732}
   debugMode: 1
+  resumeBufferDuration: 2
 --- !u!1 &822467823
 GameObject:
   m_ObjectHideFlags: 0
@@ -2457,7 +2470,7 @@ GameObject:
   - component: {fileID: 969644248}
   m_Layer: 8
   m_Name: MaskSprite
-  m_TagString: Untagged
+  m_TagString: Mask
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
