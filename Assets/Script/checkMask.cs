@@ -1,21 +1,32 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class checkMask : MonoBehaviour
 {
     private PlayerController playerController;
+    private GameManager gameManager;
 
     void Start()
     {
-        GameObject playerObj = GameObject.Find("Player"); // ¤£¥[ "/"¡A³q±`³o¼Ë§ä´N¦n
+        GameObject playerObj = GameObject.Find("Player");
         if (playerObj != null)
         {
             playerController = playerObj.GetComponent<PlayerController>();
         }
         else
         {
-            Debug.LogError("§ä¤£¨ì¦W¬° Player ªºª«¥ó¡I");
+            Debug.LogError("æ‰¾ä¸åˆ°åç‚º Player çš„ç‰©ä»¶ï¼");
+        }
+
+        GameObject gmObj = GameObject.Find("GameManager");
+        if (gmObj != null)
+        {
+            gameManager = gmObj.GetComponent<GameManager>();
+        }
+        else
+        {
+            Debug.LogError("æ‰¾ä¸åˆ° GameManagerï¼");
         }
     }
 
@@ -23,7 +34,14 @@ public class checkMask : MonoBehaviour
     {
         if (other.name == "MaskSprite" && playerController != null)
         {
-            print("TURN");
+            // ğŸ”’ åŠ å…¥æš«åœæ™‚ä¸åŸ·è¡Œ
+            if (gameManager != null && gameManager.IsPaused)
+            {
+                Debug.Log("æš«åœä¸­ï¼Œè·³é Flip()");
+                return;
+            }
+
+            Debug.Log("TURN");
             playerController.Flip();
         }
     }
